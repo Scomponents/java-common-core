@@ -1,0 +1,95 @@
+/*******************************************************************************
+ * Copyright (c) 2008-2024 Intechcore GmbH - All Rights Reserved
+ *
+ * This file is part of SComponents project
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ *
+ * Proprietary and confidential
+ *
+ * Written by Intechcore GmbH <info@intechcore.com>
+ ******************************************************************************/
+
+package com.intechcore.scomponents.common.core.event.manager;
+
+/**
+ * Represents a SCell API event engine. Unsafe for multithreading
+ */
+public interface IEventManager {
+
+    /**
+     * Adds a listener into the storage
+     * @param eventType the type of the desired event
+     * @param listener the consumer of desired event. The consumer will be called with an instance of eventType
+     * @return {@code true} in the case of successful subscription
+     * @param <TEventData> the type of desired event
+     */
+    <TEventData> boolean subscribe(Class<TEventData> eventType, IListener<TEventData> listener);
+
+    /**
+     * Adds a listener (that doesn't accept any data) to the storage (for the events without data)
+     * @param eventType the type of the desired event
+     * @param listener the consumer of desired event. The consumer will be called with an instance of eventType
+     * @return {@code true} in the case of successful subscription
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> boolean subscribe(Class<TEventData> eventType, Runnable listener);
+
+    /**
+     * Removes the listener from the storage
+     * @param eventType the type of the event to unsubscribe from
+     * @param listener the consumer to be removed
+     * @return {@code true} in the case of successful unsubscription
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> boolean unsubscribe(Class<TEventData> eventType, IListener<TEventData> listener);
+
+    /**
+     * Calls all existing listeners of the given type of event
+     * @param event an instance of the desired event. This instance is used as a parameter for all listeners
+     * @return the number of the called listeners
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> long notify(TEventData event);
+
+    /**
+     * Calls all existing listeners of the given type of event. The listeners get {@code null} as eventData
+     * in order not to create empty instances of events
+     * @param eventClass the type of the desired event. All listeners get {@code null} as parameter
+     * @return the number of the called listeners
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> long notify(Class<TEventData> eventClass);
+
+    /**
+     * Calls all listeners of the given type of event. If there are no listeners, the event is deferred and is invoked
+     * on the subscription to the event
+     * @param event an instance of the desired event. All listeners get this instance as parameter
+     * @return the number of the called listeners
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> long notifyAnyway(TEventData event);
+
+    /**
+     * Calls all listeners of the given type of event. If there are no listeners, the event is deferred and is invoked
+     * on the subscription to the event
+     * <p>The listeners get {@code null} as eventData in order not to create empty instances of events
+     * @param eventClass the desired type of event. All listeners get {@code null} as parameter
+     * @return the number of the called listeners
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> long notifyAnyway(Class<TEventData> eventClass);
+
+    /**
+     * Represents the base type for all event consumers
+     * @param <TEventData> the concrete type of event
+     */
+    interface IListener<TEventData> {
+
+        /**
+         * It will be accepted when the corresponding event is called
+         * @param data the event data, an instance of the class of the corresponding event
+         */
+        void accept(TEventData data);
+    }
+}

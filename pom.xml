@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>common-core</artifactId>
+    <groupId>com.intechcore.scomponents</groupId>
+    <version>1.0.0-java${javaVersion}</version>
+
+    <organization>
+        <name>Intechcore GmbH</name>
+        <url>https://www.intechcore.com</url>
+    </organization>
+
+    <properties>
+        <javaVersion>8</javaVersion>
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <itcReleasesUrl>https://nexus.intechcore.online/repository/maven-scomponents-releases-scell/</itcReleasesUrl>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>itc-releases</id>
+            <url>${itcReleasesUrl}</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>set-variables-in-pom</id>
+                        <configuration>
+                            <flattenMode>bom</flattenMode>
+                        </configuration>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>BuildOnJava11</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <properties>
+                <javaVersion>11</javaVersion>
+            </properties>
+        </profile>
+    </profiles>
+</project>
