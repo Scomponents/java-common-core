@@ -27,3 +27,9 @@ target/
 /.gradle/
 /gradle/
 .flattened-pom.xml
+
+# eclipse project files
+/.classpath
+/.project
+/.settings
+

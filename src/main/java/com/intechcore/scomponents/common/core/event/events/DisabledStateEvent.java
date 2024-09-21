@@ -1,20 +1,27 @@
-/*******************************************************************************
- * Copyright (c) 2008-2024 Intechcore GmbH - All Rights Reserved
+/*
+ * Copyright (c) 2024-present, Intechcore GmbH
  *
- * This file is part of SComponents project
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unauthorized copying of this file, via any medium is strictly prohibited
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Proprietary and confidential
- *
- * Written by Intechcore GmbH <info@intechcore.com>
- ******************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.intechcore.scomponents.common.core.event.events;
 
+import com.intechcore.scomponents.common.core.event.manager.IEventManager;
+
 /**
- * The main class of all events that are responsible for the performance of certain operations.
- * <p>For example, if there are no comments in a cell, operation 'delete comment' is meaningless
+ * Parent class to create an event for {@link IEventManager} to notify some UI control or command
+ * to change its state to disable.
+ * <p>Used in SComponents.Toolbox library to disable/enable UI controls depends application state</p>
  */
 public abstract class DisabledStateEvent {
     private final Boolean disabled;
@@ -23,6 +30,10 @@ public abstract class DisabledStateEvent {
         this.disabled = disabled;
     }
 
+    /**
+     * New state getter
+     * @return the disabled state value
+     */
     public Boolean getDisabled() {
         return this.disabled;
     }

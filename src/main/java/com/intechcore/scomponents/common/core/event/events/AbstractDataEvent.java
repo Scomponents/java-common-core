@@ -1,24 +1,28 @@
-/*******************************************************************************
- * Copyright (c) 2008-2024 Intechcore GmbH - All Rights Reserved
+/*
+ * Copyright (c) 2024-present, Intechcore GmbH
  *
- * This file is part of SComponents project
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unauthorized copying of this file, via any medium is strictly prohibited
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Proprietary and confidential
- *
- * Written by Intechcore GmbH <info@intechcore.com>
- ******************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.intechcore.scomponents.common.core.event.events;
 
+import com.intechcore.scomponents.common.core.event.manager.IEventManager;
+
 /**
- * The main class of all API-supported events.
- * <p>There are two kinds of API-events:
- * <p>1. The ones that have '...ChangedEvent' at the end of the name. They inform about the changes of the
- * internal states
- * <p>2. The ones that have '...Request' at the end of the name. They are responsible for the UI control performance of the corresponding operation
- * @param <TData> the type of concrete event
+ * Parent class to create an event for {@link IEventManager} with some data, for example,
+ * to notify some parts of the code about particular data change.
+ * <p>Used in SComponents.Toolbox library to exchange data between UI controls and commands</p>
+ * @param <TData> the type of the data
  */
 public abstract class AbstractDataEvent<TData> {
     protected final TData newValue;
@@ -27,6 +31,10 @@ public abstract class AbstractDataEvent<TData> {
         this.newValue = newValue;
     }
 
+    /**
+     * Event data getter
+     * @return the data
+     */
     public TData getNewValue() {
         return this.newValue;
     }
