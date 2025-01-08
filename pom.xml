@@ -6,7 +6,7 @@
 
     <artifactId>common-core</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.0.0-java${javaVersion}</version>
+    <version>1.0.1</version>
 
     <organization>
         <name>Intechcore GmbH</name>
@@ -86,18 +86,27 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.3.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>me.fabriciorby</groupId>
+                        <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                        <version>1.4.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <reportFormat>plain</reportFormat>
+                    <consoleOutputReporter>
+                        <disable>true</disable>
+                    </consoleOutputReporter>
+                    <statelessTestsetInfoReporter
+                            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+                        <theme>UNICODE</theme>
+                    </statelessTestsetInfoReporter>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>BuildOnJava11</id>
-            <activation>
-                <jdk>[11,)</jdk>
-            </activation>
-            <properties>
-                <javaVersion>11</javaVersion>
-            </properties>
-        </profile>
-    </profiles>
 </project>
