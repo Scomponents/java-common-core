@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package core.event.manager;
+package com.intechcore.scomponents.common.core.event.manager;
 
-import com.intechcore.scomponents.common.core.event.manager.EventManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
