@@ -86,6 +86,34 @@ class EventManagerTest {
     }
 
     @Test
+    void SubscribeNotifyUnsubscribe_TwoObjectTypedSubscribers_ItMustSubscribeAndNotifyCorrectly() {
+        Object testEvent1 = new TestEvent1(EXPECTED1);
+        Object testEvent2 = new TestEvent2(EXPECTED2);
+        String[] actual = new String[3];
+        this.target.subscribe(TestEvent1.class, eventData -> {
+            actual[0] = eventData.stringData;
+        });
+        this.target.subscribe(TestEvent2.class, eventData -> {
+            actual[1] = eventData.stringData;
+        });
+
+        IEventManager.IListener<TestEvent2> listener2 = eventData -> {
+            actual[2] = eventData.stringData;
+        };
+        this.target.subscribe(TestEvent2.class, listener2);
+        this.target.unsubscribe(TestEvent2.class, listener2);
+
+        long callsCount1 = this.target.notify(testEvent1);
+        long callsCount2 = this.target.notify(testEvent2);
+
+        Assertions.assertEquals(EXPECTED1, actual[0]);
+        Assertions.assertEquals(EXPECTED2, actual[1]);
+        Assertions.assertNull(actual[2]);
+        Assertions.assertEquals(1, callsCount1);
+        Assertions.assertEquals(1, callsCount2);
+    }
+
+    @Test
     void SubscribeNotify_TwoSubscribersTwoNotifies_ResultDataMustBeFromTheLastNotify() {
         TestEvent1 testEvent1 = new TestEvent1(EXPECTED1);
         TestEvent1 testEvent2 = new TestEvent1(EXPECTED2);
@@ -167,10 +195,136 @@ class EventManagerTest {
     }
 
     @Test
-    void Notify_WithoutSubscribe_ItMustCallWithoutException() {
+    void Notify_WithoutSubscribe_ItMustCallWithoutExceptionAndNoFalseNotifies() {
         TestEvent testEvent = new TestEvent1(EXPECTED1);
+        long[] counter = new long[] { 0 };
+        String[] actual = new String[] { "", "" };
+        this.target.subscribe(TestEvent2.class, eventData -> {
+            actual[0] += eventData.stringData;
+        });
 
-        Assertions.assertDoesNotThrow(() -> this.target.notify(testEvent));
+        Assertions.assertDoesNotThrow(() -> {
+            counter[0] += this.target.notify(testEvent);
+        });
+
+        this.target.subscribe(TestEvent1.class, eventData -> {
+            actual[1] += eventData.stringData;
+        });
+
+        Assertions.assertEquals(0, counter[0]);
+        Assertions.assertEquals("", actual[0]);
+        Assertions.assertEquals("", actual[1]);
+    }
+
+    @Test
+    void SubscribeNotifyRunners_TwoSubscribersTwoNotifiesTwoEvents_ResultDataMustBeCorrect() {
+        class Event1 {}
+        class Event2 {}
+
+        final String EXP1 = Event1.class.getSimpleName();
+        final String EXP2 = Event2.class.getSimpleName();
+
+        String[] actual = new String[] { "", "" };
+        this.target.subscribe(Event1.class, () -> {
+            actual[0] += EXP1;
+        });
+        Runnable event2 = () -> {
+            actual[1] += EXP2;
+        };
+        this.target.subscribe(Event2.class, event2);
+        this.target.subscribe(Event2.class, event2);
+
+        long callsCount1 = this.target.notify(Event1.class);
+        long callsCount2 = this.target.notify(Event2.class);
+
+        Assertions.assertEquals(EXP1, actual[0]);
+        Assertions.assertEquals(EXP2 + EXP2, actual[1]);
+        Assertions.assertEquals(1, callsCount1);
+        Assertions.assertEquals(2, callsCount2);
+    }
+
+    @Test
+    void SubscribeUnsubscribeNotifyRunners_TwoSubscribersTwoNotifiesTwoEvents_ItMustRunOnlySubscribedEvents() {
+        class Event1 {}
+        class Event2 {}
+
+        final String EXP1 = Event1.class.getSimpleName();
+        final String EXP2 = Event2.class.getSimpleName();
+
+        String[] actual = new String[] { "", "" };
+        this.target.subscribe(Event1.class, () -> {
+            actual[0] += EXP1;
+        });
+
+        Runnable event2 = () -> {
+            actual[1] += EXP2;
+        };
+        this.target.subscribe(Event2.class, event2);
+        this.target.subscribe(Event2.class, event2);
+        this.target.unsubscribe(Event2.class, event2);
+
+        long callsCount1 = this.target.notify(Event1.class);
+        long callsCount2 = this.target.notify(Event2.class);
+
+        Assertions.assertEquals(EXP1, actual[0]);
+        Assertions.assertEquals("", actual[1]);
+        Assertions.assertEquals(1, callsCount1);
+        Assertions.assertEquals(0, callsCount2);
+    }
+
+    @Test
+    void SubscribeUnsubscribeNotifyRunners_OneEventTwoSubscribers_ItMustCorrectUnsubscribeAndNotifyTheRest() {
+        class Event {}
+
+        final String EXP = Event.class.getSimpleName();
+
+        String[] actual = new String[] { "", "", "" };
+        this.target.subscribe(Event.class, () -> {
+            actual[0] += EXP;
+        });
+        this.target.subscribe(Event.class, () -> {
+            actual[1] += EXP;
+        });
+        Runnable event = () -> {
+            actual[2] += EXP;
+        };
+        this.target.subscribe(Event.class, event);
+        this.target.subscribe(Event.class, event);
+        long unsubscribed = this.target.unsubscribe(Event.class, event);
+
+        long callsCount = this.target.notify(Event.class);
+
+        Assertions.assertEquals(EXP, actual[0]);
+        Assertions.assertEquals(EXP, actual[1]);
+        Assertions.assertEquals("", actual[2]);
+        Assertions.assertEquals(2, callsCount);
+        Assertions.assertEquals(2, unsubscribed);
+    }
+
+    @Test
+    void UnsubscribeRunner_SetOfRunners_ItMustCorrectUnsubscribeAndRunRestEvents() {
+        class Event {}
+
+        final String EXP = Event.class.getSimpleName();
+
+        String[] actual = new String[] { "", "", "" };
+        this.target.subscribe(Event.class, () -> {
+            actual[0] += EXP;
+        });
+        this.target.subscribe(Event.class, () -> {
+            actual[1] += EXP;
+        });
+        IEventManager.IListener<Event> unsubsribeListener = this.target.subscribe(Event.class, () -> {
+            actual[2] += EXP;
+        });
+        this.target.unsubscribe(Event.class, unsubsribeListener);
+
+        long callsCount1 = this.target.notify(Event.class);
+
+        Assertions.assertEquals(EXP, actual[0]);
+        Assertions.assertEquals(EXP, actual[1]);
+        Assertions.assertEquals("", actual[2]);
+        Assertions.assertEquals(2, callsCount1);
     }
 
     public static abstract class TestEvent {

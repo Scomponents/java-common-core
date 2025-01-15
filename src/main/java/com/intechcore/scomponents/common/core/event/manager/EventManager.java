@@ -16,15 +16,35 @@
 
 package com.intechcore.scomponents.common.core.event.manager;
 
+import com.intechcore.scomponents.common.core.utils.comparator.IdentityComparer;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Supplier;
 
 public class EventManager implements IEventManager {
 
-    private final Map<Class<?>, List<IListener<?>>> listenersMap = new HashMap<>();
-    private final Map<Class<?>, List<?>> deferredEvents = new HashMap<>();
+    private final Map<Class<?>, List<IListener<?>>> listenersMap;
+    private final Map<Class<?>, List<?>> deferredEvents;
+    private final Map<Runnable, List<IListener<?>>> runnableToListenersMap;
+
+    public EventManager() {
+        this(null, null, null);
+    }
+
+    public EventManager(Supplier<Map<Class<?>, List<IListener<?>>>> listenersMapFactory,
+                        Supplier<Map<Class<?>, List<?>>> deferredEventsMapFactory,
+                        Supplier<Map<Runnable, List<IListener<?>>>> runnableToListenersMap) {
+        IdentityComparer<Class<?>> classesComparer = new IdentityComparer<>();
+        this.listenersMap = listenersMapFactory != null
+                ? listenersMapFactory.get() : new TreeMap<>(classesComparer);
+        this.deferredEvents = deferredEventsMapFactory != null
+                ? deferredEventsMapFactory.get() : new TreeMap<>(classesComparer);
+        this.runnableToListenersMap = runnableToListenersMap != null
+                ? runnableToListenersMap.get() : new TreeMap<>(new IdentityComparer<>());
+    }
 
     @Override
     public <TEventData> boolean subscribe(Class<TEventData> eventType, IListener<TEventData> listener) {
@@ -38,8 +58,35 @@ public class EventManager implements IEventManager {
     }
 
     @Override
-    public <TEventData> boolean subscribe(Class<TEventData> eventType, Runnable listener) {
-        return this.subscribe(eventType, unused -> listener.run());
+    public <TEventData> IListener<TEventData> subscribe(Class<TEventData> eventType, Runnable listener) {
+        IListener<TEventData> factListener = unused -> listener.run();
+        List<IListener<?>> existingListeners = this.runnableToListenersMap
+                .computeIfAbsent(listener, r -> new ArrayList<>());
+        existingListeners.add(factListener);
+        boolean success = this.subscribe(eventType, factListener);
+        if (!success) {
+            return null;
+        }
+
+        return factListener;
+    }
+
+    @Override
+    public <TEventData> int unsubscribe(Class<TEventData> eventType, Runnable listener) {
+        List<IListener<?>> listeners = this.runnableToListenersMap.get(listener);
+        if (listeners == null) {
+            return 0;
+        }
+
+        listeners.forEach(factListener -> {
+            this.unsubscribe(eventType, (IListener<TEventData>)factListener);
+        });
+
+        int result = listeners.size();
+
+        listeners.clear();
+
+        return result;
     }
 
     @Override

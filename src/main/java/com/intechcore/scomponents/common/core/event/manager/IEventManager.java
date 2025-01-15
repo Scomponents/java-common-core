@@ -31,20 +31,11 @@ public interface IEventManager {
     <TEventData> boolean subscribe(Class<TEventData> eventType, IListener<TEventData> listener);
 
     /**
-     * Adds a listener (that doesn't accept any data) to the storage (for the events without data)
-     * @param eventType the type of the desired event
-     * @param listener the consumer of desired event. The consumer will be called with an instance of eventType
-     * @return {@code true} in the case of successful subscription
+     * Removes particular, given listener from the storage
      * @param <TEventData> the type of the desired event
-     */
-    <TEventData> boolean subscribe(Class<TEventData> eventType, Runnable listener);
-
-    /**
-     * Removes the listener from the storage
      * @param eventType the type of the event to unsubscribe from
-     * @param listener the consumer to be removed
-     * @return {@code true} in the case of successful unsubscription
-     * @param <TEventData> the type of the desired event
+     * @param listener given consumer to be removed
+     * @return {@code true} in the case of successful removing
      */
     <TEventData> boolean unsubscribe(Class<TEventData> eventType, IListener<TEventData> listener);
 
@@ -57,6 +48,34 @@ public interface IEventManager {
     <TEventData> long notify(TEventData event);
 
     /**
+     * Calls all listeners of the given type of event. If there are no listeners, calls are deferring and will make
+     * in time of a subscription to the event
+     * @param event an instance of the desired event. All listeners get this instance as parameter
+     * @return the number of the called listeners
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> long notifyAnyway(TEventData event);
+
+
+    /**
+     * Adds a listener (that doesn't accept any data) to the storage (for the events without data)
+     * @param eventType the type of the desired event
+     * @param listener the consumer of desired event. The consumer will be called with an instance of eventType
+     * @return {@code true} in the case of successful subscription
+     * @param <TEventData> the type of the desired event
+     */
+    <TEventData> IListener<TEventData> subscribe(Class<TEventData> eventType, Runnable listener);
+
+    /**
+     * Removes particular, given {@code Runnable} listener from the storage
+     * @param <TEventData> the type of the desired event
+     * @param eventType the type of the event to unsubscribe from
+     * @param listener given consumer to be removed
+     * @return number of removed listeners with given runnable
+     */
+    <TEventData> int unsubscribe(Class<TEventData> eventType, Runnable listener);
+
+    /**
      * Calls all existing listeners of the given type of event. The listeners get {@code null} as eventData
      * in order not to create empty instances of events
      * @param eventClass the type of the desired event. All listeners get {@code null} as parameter
@@ -66,17 +85,8 @@ public interface IEventManager {
     <TEventData> long notify(Class<TEventData> eventClass);
 
     /**
-     * Calls all listeners of the given type of event. If there are no listeners, the event is deferred and is invoked
-     * on the subscription to the event
-     * @param event an instance of the desired event. All listeners get this instance as parameter
-     * @return the number of the called listeners
-     * @param <TEventData> the type of the desired event
-     */
-    <TEventData> long notifyAnyway(TEventData event);
-
-    /**
-     * Calls all listeners of the given type of event. If there are no listeners, the event is deferred and is invoked
-     * on the subscription to the event
+     * Calls all listeners of the given type of event. If there are no listeners, calls are deferring and will make
+     * in time of a subscription to the event.
      * <p>The listeners get {@code null} as eventData in order not to create empty instances of events
      * @param eventClass the desired type of event. All listeners get {@code null} as parameter
      * @return the number of the called listeners

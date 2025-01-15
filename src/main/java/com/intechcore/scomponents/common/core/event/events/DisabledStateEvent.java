@@ -21,7 +21,7 @@ import com.intechcore.scomponents.common.core.event.manager.IEventManager;
 /**
  * Parent class to create an event for {@link IEventManager} to notify some UI control or command
  * to change its state to disable.
- * <p>Used in SComponents.Toolbox library to disable/enable UI controls depends application state</p>
+ * <p>Used in SComponents.Toolbox library to disable/enable UI controls depends on application state</p>
  */
 public abstract class DisabledStateEvent {
     private final Boolean disabled;

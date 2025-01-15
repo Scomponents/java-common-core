@@ -22,7 +22,6 @@ import java.util.Map;
 public class RestorePointEventManager implements IEventManager {
     private final IEventManager target;
     private final Map<Class<?>, List<IListener<?>>> listenersToRemove = new HashMap<>();
-//    private final Map<Class<?>, List<Runnable>> runnablesToRemove = new HashMap<>();
 
     public RestorePointEventManager(IEventManager target) {
         this.target = target;
@@ -32,15 +31,24 @@ public class RestorePointEventManager implements IEventManager {
     public <TEventData> boolean subscribe(Class<TEventData> eventType, IListener<TEventData> listener) {
         boolean listenerWasAdded = this.target.subscribe(eventType, listener);
         if (listenerWasAdded) {
-            this.listenersToRemove.computeIfAbsent(eventType, k -> new ArrayList<>()).add(listener);
+            this.addListenerToRemove(eventType, listener);
         }
         return listenerWasAdded;
     }
 
     @Override
-    public <TEventData> boolean subscribe(Class<TEventData> eventType, Runnable runnable) {
-//        this.runnablesToRemove.computeIfAbsent(eventType, k -> new ArrayList<>()).add(runnable);
-        return this.target.subscribe(eventType, runnable);
+    public <TEventData> IListener<TEventData> subscribe(Class<TEventData> eventType, Runnable runnable) {
+        IListener<TEventData> result = this.target.subscribe(eventType, runnable);
+        if (result != null) {
+            this.addListenerToRemove(eventType, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public <TEventData> int unsubscribe(Class<TEventData> eventType, Runnable listener) {
+        return this.target.unsubscribe(eventType, listener);
     }
 
     @Override
@@ -83,13 +91,12 @@ public class RestorePointEventManager implements IEventManager {
         return counter[0];
     }
 
+    private <TEvent> void addListenerToRemove(Class<?> eventClass, IListener<?> listener) {
+        this.listenersToRemove.computeIfAbsent(eventClass, k -> new ArrayList<>()).add(listener);
+    }
+
     private <TEvent> boolean removeListener(Class<?> eventClass, IListener<?> listener) {
         boolean success = this.target.unsubscribe((Class<TEvent>)eventClass, (IListener<TEvent>)listener);
         return success;
     }
-
-//    private <TEvent> boolean removeRunnable(Class<?> eventClass, Runnable runnable) {
-//        boolean success = this.target.unsubscribe((Class<TEvent>)eventClass); // TODO?
-//        return success;
-//    }
 }

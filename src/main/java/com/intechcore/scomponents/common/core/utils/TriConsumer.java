@@ -16,6 +16,12 @@
 
 package com.intechcore.scomponents.common.core.utils;
 
+/**
+ * {@code Consumer} with three arguments
+ * @param <TFirstParam> type of the first arg
+ * @param <TSecondParam> type of the second arg
+ * @param <TThirdParam> type of the third arg
+ */
 @FunctionalInterface
 public interface TriConsumer<TFirstParam, TSecondParam, TThirdParam> {
     void accept(TFirstParam firstParam, TSecondParam secondParam, TThirdParam thirdParam);

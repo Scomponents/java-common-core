@@ -24,6 +24,7 @@ class RestorePointEventManagerIntegrationTest {
     void AllInOne_CorrectInput_ItMustNotifyAllClearSubscribedToTargetAndLeaveToInternal() {
         class Event1 { }
         class Event2 { }
+        class EventRunner { }
 
         Map<Class<?>, AtomicInteger> notifiesCounters = new HashMap<>();
         Consumer<Object> notifyCounter = eventClass -> {
@@ -36,10 +37,22 @@ class RestorePointEventManagerIntegrationTest {
             this.internalManager.subscribe(Event1.class, notifyCounter::accept);
             this.internalManager.subscribe(Event2.class, notifyCounter::accept);
             this.internalManager.subscribe(Event2.class, notifyCounter::accept);
+            this.internalManager.subscribe(EventRunner.class, () -> {
+                notifyCounter.accept(new EventRunner());
+            });
+            this.internalManager.subscribe(EventRunner.class, () -> {
+                notifyCounter.accept(new EventRunner());
+            });
             this.target.subscribe(Event1.class, notifyCounter::accept);
             this.target.subscribe(Event1.class, notifyCounter::accept);
             this.target.subscribe(Event2.class, notifyCounter::accept);
             this.target.subscribe(Event2.class, notifyCounter::accept);
+            this.target.subscribe(EventRunner.class, () -> {
+                notifyCounter.accept(new EventRunner());
+            });
+            this.target.subscribe(EventRunner.class, () -> {
+                notifyCounter.accept(new EventRunner());
+            });
         };
 
         Consumer<Integer> notifyActAndCheck = eachEventExpectedInvocations -> {
@@ -47,16 +60,19 @@ class RestorePointEventManagerIntegrationTest {
 
             this.internalManager.notify(new Event1());
             this.internalManager.notify(new Event2());
+            this.internalManager.notify(EventRunner.class);
             this.target.notify(new Event1());
             this.target.notify(new Event2());
+            this.target.notify(EventRunner.class);
 
             Assertions.assertEquals(eachEventExpectedInvocations, notifiesCounters.get(Event1.class).get());
             Assertions.assertEquals(eachEventExpectedInvocations, notifiesCounters.get(Event2.class).get());
+            Assertions.assertEquals(eachEventExpectedInvocations, notifiesCounters.get(EventRunner.class).get());
         };
 
         Runnable removeSubscribersActAndCheck = () -> {
             int removedSubscribers = this.target.removeStoredSubscribers();
-            Assertions.assertEquals(4, removedSubscribers);
+            Assertions.assertEquals(6, removedSubscribers);
         };
 
         setup.run();
