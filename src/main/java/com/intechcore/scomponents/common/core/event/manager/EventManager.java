@@ -16,7 +16,7 @@
 
 package com.intechcore.scomponents.common.core.event.manager;
 
-import com.intechcore.scomponents.common.core.utils.comparator.IdentityComparer;
+import com.intechcore.scomponents.common.core.utils.comparator.IdentityComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
+/**
+ * Implementation of the {@link IEventManager}
+ */
 public class EventManager implements IEventManager {
 
     private final Map<Class<?>, List<IListener<?>>> listenersMap;
@@ -34,29 +37,40 @@ public class EventManager implements IEventManager {
         this(null, null, null);
     }
 
+    /**
+     * Constructor to have possibility to use custom internal {@code Map} implementations for internal maps
+     * @param listenersMapFactory {@code Map} of main listeners map
+     * @param deferredEventsMapFactory {@code Map} of deferred listeners from {@link #notifyAnyway}
+     * @param runnableToListenersMap {@code Map} of {@code Runnable} listeners
+     */
     public EventManager(Supplier<Map<Class<?>, List<IListener<?>>>> listenersMapFactory,
                         Supplier<Map<Class<?>, List<?>>> deferredEventsMapFactory,
                         Supplier<Map<Runnable, List<IListener<?>>>> runnableToListenersMap) {
-        IdentityComparer<Class<?>> classesComparer = new IdentityComparer<>();
+        IdentityComparator<Class<?>> classesComparer = new IdentityComparator<>();
         this.listenersMap = listenersMapFactory != null
                 ? listenersMapFactory.get() : new TreeMap<>(classesComparer);
         this.deferredEvents = deferredEventsMapFactory != null
                 ? deferredEventsMapFactory.get() : new TreeMap<>(classesComparer);
         this.runnableToListenersMap = runnableToListenersMap != null
-                ? runnableToListenersMap.get() : new TreeMap<>(new IdentityComparer<>());
+                ? runnableToListenersMap.get() : new TreeMap<>(new IdentityComparator<>());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> boolean subscribe(Class<TEventData> eventType, IListener<TEventData> listener) {
         if (this.deferredEvents.containsKey(eventType)) {
             List<TEventData> deferredEvents = (List<TEventData>)this.deferredEvents.get(eventType);
             deferredEvents.forEach(listener::accept);
-            deferredEvents.clear();
         }
 
         return this.getListeners(eventType).add(listener);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> IListener<TEventData> subscribe(Class<TEventData> eventType, Runnable listener) {
         IListener<TEventData> factListener = unused -> listener.run();
@@ -71,6 +85,9 @@ public class EventManager implements IEventManager {
         return factListener;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> int unsubscribe(Class<TEventData> eventType, Runnable listener) {
         List<IListener<?>> listeners = this.runnableToListenersMap.get(listener);
@@ -89,31 +106,33 @@ public class EventManager implements IEventManager {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> boolean unsubscribe(Class<TEventData> eventType, IListener<TEventData> listener) {
         return this.getListeners(eventType).remove(listener);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> long notify(TEventData event) {
         return this.notifyListeners(this.getListeners(event.getClass()), event);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> long notify(Class<TEventData> eventClass) {
         return this.notifyListeners(this.getListeners(eventClass), null);
     }
 
-    private <TEventData> long notifyListeners(List<IListener<?>> listeners, TEventData event) {
-        long[] count = new long[] { 0 };
-        listeners.forEach(listener -> {
-            ((IListener<TEventData>)listener).accept(event);
-            count[0]++;
-        });
-
-        return count[0];
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> long notifyAnyway(TEventData event) {
         Class<?> eventClass = event.getClass();
@@ -135,9 +154,22 @@ public class EventManager implements IEventManager {
         return this.notifyListeners(listeners, event);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <TEventData> long notifyAnyway(Class<TEventData> eventClass) {
         return this.notifyAnyway(eventClass, null);
+    }
+
+    private <TEventData> long notifyListeners(List<IListener<?>> listeners, TEventData event) {
+        long[] count = new long[] { 0 };
+        listeners.forEach(listener -> {
+            ((IListener<TEventData>)listener).accept(event);
+            count[0]++;
+        });
+
+        return count[0];
     }
 
     private <TEventData> List<IListener<?>> getListeners(Class<TEventData> eventType) {

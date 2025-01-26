@@ -17,12 +17,13 @@
         <javaVersion>8</javaVersion>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <itcReleasesId>scomponents-releases-scell</itcReleasesId>
         <itcReleasesUrl>https://nexus.intechcore.online/repository/maven-scomponents-releases-scell/</itcReleasesUrl>
     </properties>
 
     <distributionManagement>
         <repository>
-            <id>itc-releases</id>
+            <id>${itcReleasesId}</id>
             <url>${itcReleasesUrl}</url>
         </repository>
     </distributionManagement>

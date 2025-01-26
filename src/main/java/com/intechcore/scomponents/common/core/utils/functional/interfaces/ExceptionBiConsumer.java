@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-present, Intechcore GmbH
+ * Copyright (c) 2025-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.intechcore.scomponents.common.core.utils;
+package com.intechcore.scomponents.common.core.utils.functional.interfaces;
 
 /**
- * {@code Consumer} with three arguments
- * @param <TFirstParam> type of the first arg
- * @param <TSecondParam> type of the second arg
- * @param <TThirdParam> type of the third arg
+ * {@code BiConsumer} with checked exception
+ * @param <TArgument1> type of the first arg
+ * @param <TArgument2> type of the second arg
+ * @param <TException> type of the checked exception
  */
 @FunctionalInterface
-public interface TriConsumer<TFirstParam, TSecondParam, TThirdParam> {
-    void accept(TFirstParam firstParam, TSecondParam secondParam, TThirdParam thirdParam);
+public interface ExceptionBiConsumer<TArgument1, TArgument2, TException extends Exception> {
+    void accept(TArgument1 argument1, TArgument2 argument2) throws TException;
 }

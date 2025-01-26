@@ -58,10 +58,10 @@ public interface IEventManager {
 
 
     /**
-     * Adds a listener (that doesn't accept any data) to the storage (for the events without data)
+     * Adds a listener that doesn't accept any data to the storage (for the events without data)
      * @param eventType the type of the desired event
      * @param listener the consumer of desired event. The consumer will be called with an instance of eventType
-     * @return {@code true} in the case of successful subscription
+     * @return {@code IListener<TEventData>} in the case of successful subscription, {@code null} otherwise
      * @param <TEventData> the type of the desired event
      */
     <TEventData> IListener<TEventData> subscribe(Class<TEventData> eventType, Runnable listener);

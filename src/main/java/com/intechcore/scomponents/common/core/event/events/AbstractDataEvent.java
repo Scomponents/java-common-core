@@ -21,7 +21,7 @@ import com.intechcore.scomponents.common.core.event.manager.IEventManager;
 /**
  * Parent class to create an event for {@link IEventManager} with some data, for example,
  * to notify some parts of the code about particular data change.
- * <p>Used in SComponents.Toolbox library to exchange data between UI controls and commands</p>
+ * <p>Used in {@code SComponents.Toolbox} library to exchange data between UI controls and commands</p>
  * @param <TData> the type of the data
  */
 public abstract class AbstractDataEvent<TData> {
