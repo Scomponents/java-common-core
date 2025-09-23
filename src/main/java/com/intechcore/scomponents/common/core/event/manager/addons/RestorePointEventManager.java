@@ -24,9 +24,40 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Decorator of the {@code IEventManager} to have possibility to {@link #removeStoredSubscribers()}, other hand, from
- * the moment of creation, user will have possibility to remove all the new subscribers added with this instance
- * to convenient clean of the internal target {@link IEventManager}
+ * A decorator for {@link IEventManager} that provides the ability to track and remove
+ * subscribers added through this specific instance
+ *
+ * <p>This class wraps an existing {@code IEventManager} and maintains a record of all
+ * subscribers added via its methods. This allows for convenient cleanup of subscriptions
+ * without affecting subscribers that were registered directly with the underlying event manager
+ *
+ * <p><b>Key features:</b>
+ * <ul>
+ *   <li>Tracks all subscribers added through this decorator instance</li>
+ <li>Provides bulk removal of tracked subscribers via {@link #removeStoredSubscribers()}</li>
+ *   <li>Maintains isolation from subscribers registered directly with the underlying event manager</li>
+ *   <li>Useful for temporary event handling scenarios that require clean cleanup</li>
+ * </ul>
+ *
+ * <p><b>Typical usage pattern:</b>
+ * <pre>{@code
+ * IEventManager mainEventManager = ...;
+ * RestorePointEventManager tempManager = new RestorePointEventManager(mainEventManager);
+ *
+ * // Subscribe to events through the restore point manager
+ * tempManager.subscribe(MyEvent.class, this::handleEvent);
+ *
+ * // ... perform operations that use these subscriptions ...
+ *
+ * // Clean up all subscriptions made through this restore point
+ * tempManager.removeStoredSubscribers();
+ * }</pre>
+ *
+ * <p>This is particularly useful in scenarios where a component needs to temporarily
+ * listen to events and then clean up all its subscriptions without affecting other
+ * components that may have registered listeners with the underlying event manager.
+ *
+ * @see IEventManager
  */
 public class RestorePointEventManager implements IEventManager {
     private final IEventManager target;
@@ -109,9 +140,17 @@ public class RestorePointEventManager implements IEventManager {
         return this.target.notifyAnyway(eventClass);
     }
 
+
     /**
+     * Removes all subscribers that were added through this restore point instance
      *
-     * @return number of removed listeners
+     * <p>This method unsubscribes all listeners that were registered via this decorator
+     * from the underlying event manager. Subscribers that were registered directly
+     * with the underlying event manager are not affected
+     *
+     * <p>After calling this method, the internal tracking list is cleared
+     *
+     * @return the total number of subscribers that were removed
      */
     public int removeStoredSubscribers() {
         int[] counter = new int[] { 0 };

@@ -6,12 +6,41 @@
 
     <artifactId>common-core</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+
+    <description>A comprehensive collection of utility classes and patterns for common Java development tasks</description>
+    <url>https://github.com/Scomponents/java-common-core</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <organization>
         <name>Intechcore GmbH</name>
         <url>https://www.intechcore.com</url>
     </organization>
+
+    <developers>
+        <developer>
+            <name>Gennady Bekasov</name>
+            <email>bekasov.g@gmail.com</email>
+            <organization>Intechcore GmbH</organization>
+            <organizationUrl>https://www.intechcore.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:Scomponents/java-common-core.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Scomponents/java-common-core.git</developerConnection>
+        <url>https://github.com/Scomponents/java-common-core</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <javaVersion>8</javaVersion>
@@ -108,6 +137,59 @@
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.12.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.8</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>mavencenralRelease</id>
+            <properties>
+                <itcReleasesId>central</itcReleasesId>
+                <itcReleasesUrl>https://central.sonatype.com/api/v1/publishing</itcReleasesUrl>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.8.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>validated</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
