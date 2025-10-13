@@ -1,5 +1,9 @@
 # Intechcore Java Common Utilities Library
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven-Central](https://img.shields.io/maven-central/v/com.intechcore.scomponents/common-core)](https://central.sonatype.com/artifact/com.intechcore.scomponents/common-core)
+[![Hits-of-Code](https://hitsofcode.com/github/Scomponents/java-common-core?branch=master)](https://hitsofcode.com/github/Scomponents/java-common-core/view?branch=master)
+
 A comprehensive collection of utility classes and patterns for common Java development tasks,
 including safe property access, event management, exception handling, and type conversions.
 
