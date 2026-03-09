@@ -6,7 +6,7 @@
 
     <artifactId>common-core</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
 
@@ -46,6 +46,7 @@
         <javaVersion>8</javaVersion>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <itcReleasesId>scomponents-releases-scell</itcReleasesId>
         <itcReleasesUrl>https://nexus.intechcore.online/repository/maven-scomponents-releases-scell/</itcReleasesUrl>
     </properties>
@@ -82,7 +83,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

@@ -34,7 +34,7 @@ class EventManagerTest {
 
     @Test
     void SubscribeNotify_DefaultOrder_ItMustSubscribeAndNotifyCorrectly() {
-        TestEvent testEvent = new TestEvent1(EXPECTED1);
+        TestEvent testEvent = new TestEvent1(this.EXPECTED1);
         String[] actual = new String[1];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -42,13 +42,13 @@ class EventManagerTest {
 
         long callsCount = this.target.notify(testEvent);
 
-        Assertions.assertEquals(EXPECTED1, actual[0]);
+        Assertions.assertEquals(this.EXPECTED1, actual[0]);
         Assertions.assertEquals(1, callsCount);
     }
 
     @Test
     void SubscribeNotify_TwoSubscribers_ItMustSubscribeAndNotifyCorrectly() {
-        TestEvent testEvent = new TestEvent1(EXPECTED1);
+        TestEvent testEvent = new TestEvent1(this.EXPECTED1);
         String[] actual = new String[2];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -59,15 +59,15 @@ class EventManagerTest {
 
         long callsCount = this.target.notify(testEvent);
 
-        Assertions.assertEquals(EXPECTED1, actual[0]);
-        Assertions.assertEquals(EXPECTED1, actual[1]);
+        Assertions.assertEquals(this.EXPECTED1, actual[0]);
+        Assertions.assertEquals(this.EXPECTED1, actual[1]);
         Assertions.assertEquals(2, callsCount);
     }
 
     @Test
     void SubscribeNotify_TwoObjectTypedSubscribers_ItMustSubscribeAndNotifyCorrectly() {
-        Object testEvent1 = new TestEvent1(EXPECTED1);
-        Object testEvent2 = new TestEvent2(EXPECTED2);
+        Object testEvent1 = new TestEvent1(this.EXPECTED1);
+        Object testEvent2 = new TestEvent2(this.EXPECTED2);
         String[] actual = new String[2];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -79,16 +79,16 @@ class EventManagerTest {
         long callsCount1 = this.target.notify(testEvent1);
         long callsCount2 = this.target.notify(testEvent2);
 
-        Assertions.assertEquals(EXPECTED1, actual[0]);
-        Assertions.assertEquals(EXPECTED2, actual[1]);
+        Assertions.assertEquals(this.EXPECTED1, actual[0]);
+        Assertions.assertEquals(this.EXPECTED2, actual[1]);
         Assertions.assertEquals(1, callsCount1);
         Assertions.assertEquals(1, callsCount2);
     }
 
     @Test
     void SubscribeNotifyUnsubscribe_TwoObjectTypedSubscribers_ItMustSubscribeAndNotifyCorrectly() {
-        Object testEvent1 = new TestEvent1(EXPECTED1);
-        Object testEvent2 = new TestEvent2(EXPECTED2);
+        Object testEvent1 = new TestEvent1(this.EXPECTED1);
+        Object testEvent2 = new TestEvent2(this.EXPECTED2);
         String[] actual = new String[3];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -106,8 +106,8 @@ class EventManagerTest {
         long callsCount1 = this.target.notify(testEvent1);
         long callsCount2 = this.target.notify(testEvent2);
 
-        Assertions.assertEquals(EXPECTED1, actual[0]);
-        Assertions.assertEquals(EXPECTED2, actual[1]);
+        Assertions.assertEquals(this.EXPECTED1, actual[0]);
+        Assertions.assertEquals(this.EXPECTED2, actual[1]);
         Assertions.assertNull(actual[2]);
         Assertions.assertEquals(1, callsCount1);
         Assertions.assertEquals(1, callsCount2);
@@ -115,8 +115,8 @@ class EventManagerTest {
 
     @Test
     void SubscribeNotify_TwoSubscribersTwoNotifies_ResultDataMustBeFromTheLastNotify() {
-        TestEvent1 testEvent1 = new TestEvent1(EXPECTED1);
-        TestEvent1 testEvent2 = new TestEvent1(EXPECTED2);
+        TestEvent1 testEvent1 = new TestEvent1(this.EXPECTED1);
+        TestEvent1 testEvent2 = new TestEvent1(this.EXPECTED2);
         String[] actual = new String[2];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -128,15 +128,15 @@ class EventManagerTest {
         long callsCount1 = this.target.notify(testEvent1);
         long callsCount2 = this.target.notify(testEvent2);
 
-        Assertions.assertEquals(EXPECTED2, actual[0]);
-        Assertions.assertEquals(EXPECTED2, actual[1]);
+        Assertions.assertEquals(this.EXPECTED2, actual[0]);
+        Assertions.assertEquals(this.EXPECTED2, actual[1]);
         Assertions.assertEquals(2, callsCount1);
         Assertions.assertEquals(2, callsCount2);
     }
 
     @Test
     void SubscribeNotify_TwoSubscribersOneNotify_ItMustNotCallSubscriberWithoutNotify() {
-        TestEvent testEvent2 = new TestEvent2(EXPECTED2);
+        TestEvent testEvent2 = new TestEvent2(this.EXPECTED2);
         String[] actual = new String[2];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -148,14 +148,14 @@ class EventManagerTest {
         long callsCount2 = this.target.notify(testEvent2);
 
         Assertions.assertNull(actual[0]);
-        Assertions.assertEquals(EXPECTED2, actual[1]);
+        Assertions.assertEquals(this.EXPECTED2, actual[1]);
         Assertions.assertEquals(1, callsCount2);
     }
 
     @Test
     void SubscribeNotify_TwoSubscribersTwoNotifiesTwoEvents_EverySubscriberMustCalledOnce() {
-        TestEvent testEvent1 = new TestEvent1(EXPECTED1);
-        TestEvent testEvent2 = new TestEvent2(EXPECTED2);
+        TestEvent testEvent1 = new TestEvent1(this.EXPECTED1);
+        TestEvent testEvent2 = new TestEvent2(this.EXPECTED2);
         int[] actual = new int[] {0, 0};
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0]++;
@@ -175,8 +175,8 @@ class EventManagerTest {
 
     @Test
     void SubscribeNotify_TwoSubscribersTwoNotifiesTwoEvents_ResultDataMustBeCorrect() {
-        TestEvent testEvent1 = new TestEvent1(EXPECTED1);
-        TestEvent testEvent2 = new TestEvent2(EXPECTED2);
+        TestEvent testEvent1 = new TestEvent1(this.EXPECTED1);
+        TestEvent testEvent2 = new TestEvent2(this.EXPECTED2);
         String[] actual = new String[2];
         this.target.subscribe(TestEvent1.class, eventData -> {
             actual[0] = eventData.stringData;
@@ -188,15 +188,15 @@ class EventManagerTest {
         long callsCount1 = this.target.notify(testEvent1);
         long callsCount2 = this.target.notify(testEvent2);
 
-        Assertions.assertEquals(EXPECTED1, actual[0]);
-        Assertions.assertEquals(EXPECTED2, actual[1]);
+        Assertions.assertEquals(this.EXPECTED1, actual[0]);
+        Assertions.assertEquals(this.EXPECTED2, actual[1]);
         Assertions.assertEquals(1, callsCount1);
         Assertions.assertEquals(1, callsCount2);
     }
 
     @Test
     void Notify_WithoutSubscribe_ItMustCallWithoutExceptionAndNoFalseNotifies() {
-        TestEvent testEvent = new TestEvent1(EXPECTED1);
+        TestEvent testEvent = new TestEvent1(this.EXPECTED1);
         long[] counter = new long[] { 0 };
         String[] actual = new String[] { "", "" };
         this.target.subscribe(TestEvent2.class, eventData -> {

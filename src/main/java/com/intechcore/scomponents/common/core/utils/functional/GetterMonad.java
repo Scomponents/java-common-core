@@ -46,7 +46,9 @@ import java.util.function.Supplier;
  * }</pre>
  *
  * @param <TResult> the type of the result produced by the getter function
+ * @deprecated (migration to NsFunc)
  */
+@Deprecated
 public class GetterMonad<TResult> {
     private final Function<?, TResult> getter;
     private final Supplier<TResult> defaultValueSupplier;
@@ -59,7 +61,7 @@ public class GetterMonad<TResult> {
      * @param getter the function to extract the value from the source object
      */
     public <TSource> GetterMonad(Function<TSource, TResult> getter) {
-        this(getter, (Supplier<TResult>)null);
+        this(getter, (Supplier<TResult>) null);
     }
 
     /**

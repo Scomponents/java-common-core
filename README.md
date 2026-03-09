@@ -3,17 +3,19 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Maven-Central](https://img.shields.io/maven-central/v/com.intechcore.scomponents/common-core)](https://central.sonatype.com/artifact/com.intechcore.scomponents/common-core)
 [![Hits-of-Code](https://hitsofcode.com/github/Scomponents/java-common-core?branch=master)](https://hitsofcode.com/github/Scomponents/java-common-core/view?branch=master)
+[![Keep a Changelog](https://img.shields.io/badge/changelog-Keep%20a%20Changelog-%23E05735)](CHANGELOG.md)
 
 A comprehensive collection of utility classes and patterns for common Java development tasks,
 including safe property access, event management, exception handling, and type conversions.
 
 ## Features
 
-- 🛡️ **Null-safe property access** with monadic chaining
+- 🚩 **Type-safe enum flag management** with a convenient `EnumFlags` wrapper over `EnumSet` offering a fluent API
 - 🎯 **Type-safe event system** with deferred publication
 - 🔄 **Stream conversion utilities** for I/O operations
 - 🔍 **Exception analysis tools** for root cause detection
 - 🏷️ **Identity-based comparison** for object tracking
+- ⚠️ Getter Monad (Deprecated) – Safe Data Transformation Pipeline
 
 ## Installation
 
@@ -22,74 +24,16 @@ including safe property access, event management, exception handling, and type c
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>common-core</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation 'com.intechcore.scomponents:common-core:1.1.0'
+implementation 'com.intechcore.scomponents:common-core:1.2.0'
 ```
 
 ## Usage Examples
-
-### Getter Monad - Safe Data Transformation Pipeline
-```java
-enum Doc4jAnchorExtractor {
-    ONE_CELL_ANCHOR(AnchorType.ONE_CELL_BINDING,
-            new GetterMonad<>(CTOneCellAnchor::getPic),
-            new GetterMonad<>(CTOneCellAnchor::getSp),
-            new GetterMonad<>(CTOneCellAnchor::getGraphicFrame),
-            new GetterMonad<>(CTOneCellAnchor::getGrpSp),
-            new GetterMonad<>(CTOneCellAnchor::getCxnSp)
-    ),
-
-    TWO_CELL_ANCHOR(AnchorType.TWO_CELL_BINDING,
-            new GetterMonad<>(CTTwoCellAnchor::getPic),
-            new GetterMonad<>(CTTwoCellAnchor::getSp),
-            new GetterMonad<>(CTTwoCellAnchor::getGraphicFrame),
-            new GetterMonad<>(CTTwoCellAnchor::getGrpSp),
-            new GetterMonad<>(CTTwoCellAnchor::getCxnSp)
-    ),
-
-    ABSOLUTE_ANCHOR(AnchorType.ABSOLUTE_BINDING,
-            new GetterMonad<>(CTAbsoluteAnchor::getPic),
-            new GetterMonad<>(CTAbsoluteAnchor::getSp),
-            new GetterMonad<>(CTAbsoluteAnchor::getGraphicFrame),
-            new GetterMonad<>(CTAbsoluteAnchor::getGrpSp),
-            new GetterMonad<>(CTAbsoluteAnchor::getCxnSp)
-    );
-    public final AnchorType anchorType;
-
-    public final GetterMonad<CTPicture> ctPictureCaster;
-    public final GetterMonad<CTShape> ctShapeCaster;
-    public final GetterMonad<CTGraphicalObjectFrame> ctDrawingObjectCaster;
-    public final GetterMonad<CTGroupShape> ctGroupShapeCaster;
-    public final GetterMonad<CTConnector> ctConnectorShapeCaster;
-
-    Doc4jAnchorExtractor(AnchorType anchorType,
-                         GetterMonad<CTPicture> ctPictureCaster,
-                         GetterMonad<CTShape> ctShapeCaster,
-                         GetterMonad<CTGraphicalObjectFrame> ctDrawingObjectCaster,
-                         GetterMonad<CTGroupShape> ctGroupShapeCaster,
-                         GetterMonad<CTConnector> ctConnectorShapeCaster) {
-
-        this.anchorType = anchorType;
-
-        this.ctPictureCaster = ctPictureCaster;
-        this.ctShapeCaster = ctShapeCaster;
-        this.ctDrawingObjectCaster = ctDrawingObjectCaster;
-        this.ctGroupShapeCaster = ctGroupShapeCaster;
-        this.ctConnectorShapeCaster = ctConnectorShapeCaster;
-    }
-}
-
-enum AnchorType {
-    ONE_CELL_BINDING,
-    TWO_CELL_BINDING,
-    ABSOLUTE_BINDING;
-}
-```
 
 ### Event Manager - Strongly Typed Event Management System
 ```java
@@ -157,3 +101,7 @@ Set<Object> identitySet = new TreeSet<>(new IdentityComparator<>());
 ```
 
 Star this repo if you find it useful! ⭐
+
+## History
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
