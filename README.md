@@ -15,7 +15,7 @@ including safe property access, event management, exception handling, and type c
 - 🔄 **Stream conversion utilities** for I/O operations
 - 🔍 **Exception analysis tools** for root cause detection
 - 🏷️ **Identity-based comparison** for object tracking
-- ⚠️ Getter Monad (Deprecated) – Safe Data Transformation Pipeline
+- ⚠️ **NsFunc** – Safe Data Transformation Pipeline
 
 ## Installation
 
@@ -24,13 +24,13 @@ including safe property access, event management, exception handling, and type c
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>common-core</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation 'com.intechcore.scomponents:common-core:1.2.0'
+implementation 'com.intechcore.scomponents:common-core:1.3.0'
 ```
 
 ## Usage Examples
